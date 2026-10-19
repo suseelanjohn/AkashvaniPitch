@@ -24,7 +24,7 @@ jobs:
       run: ./gradlew assembleDebug
 
     - name: Upload APK Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4   # <-- UPDATED FROM v3 TO v4
       with:
         name: akashvani-pitch-debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
