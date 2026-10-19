@@ -30,7 +30,7 @@ jobs:
         gradle-version: '8.7'
         validate-wrappers: false
 
-    - name: 5. Enable AndroidX and Build Debug APK
+    - name: 5. Generate Clean Files, Enable AndroidX, and Build APK
       run: |
         SETTINGS_FILE=$(find . -name "settings.gradle.kts" | head -n 1)
 
@@ -42,8 +42,8 @@ jobs:
         PROJECT_DIR=$(dirname "$SETTINGS_FILE")
         cd "$PROJECT_DIR"
 
-        # Automatically create gradle.properties with AndroidX enabled
-        cat <<EOF > gradle.properties
+        # 1. Create gradle.properties with AndroidX enabled
+        cat << 'EOF' > gradle.properties
         org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
         android.useAndroidX=true
         android.enableJetifier=true
@@ -51,6 +51,19 @@ jobs:
         android.nonTransitiveRClass=true
         EOF
 
+        # 2. Write a 100% well-formed, valid Android VectorDrawable XML cleanly
+        mkdir -p app/src/main/res/drawable
+        echo '<?xml version="1.0" encoding="utf-8"?>' > app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="120" android:viewportHeight="120">' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '    <path android:fillColor="#731111" android:pathData="M60,60m-52,0a52,52 0,1 1,104 0a52,52 0,1 1,-104 0" />' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '    <path android:strokeColor="#f3e2b3" android:strokeWidth="3" android:pathData="M15,35 C40,25 80,25 105,35 M15,85 C40,95 80,95 105,85" />' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '    <path android:fillColor="#d4ad5b" android:pathData="M60,24 L60,24 A15,15 0 0,1 75,39 L75,53 A15,15 0 0,1 60,68 L60,68 A15,15 0 0,1 45,53 L45,39 A15,15 0 0,1 60,24 Z" />' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '    <path android:strokeColor="#1b1205" android:strokeWidth="2.5" android:pathData="M48,36 H72 M48,44 H72 M48,52 H72" />' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '    <path android:strokeColor="#f3e2b3" android:strokeWidth="5" android:strokeLineCap="round" android:pathData="M36,48 C36,61.25 46.75,72 60,72 C73.25,72 84,61.25 84,48" />' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '    <path android:strokeColor="#f3e2b3" android:strokeWidth="6" android:pathData="M60,72 V92 M42,92 H78" />' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+        echo '</vector>' >> app/src/main/res/drawable/ic_akashvani_radio.xml
+
+        # 3. Compile Debug APK
         gradle assembleDebug --stacktrace
 
     - name: 6. Upload Compiled APK
