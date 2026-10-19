@@ -24,24 +24,32 @@ jobs:
         distribution: 'zulu'
         java-version: '17'
 
-    - name: 4. Install Gradle Automatically (Validation Disabled)
+    - name: 4. Install Gradle Automatically
       uses: gradle/actions/setup-gradle@v4
       with:
         gradle-version: '8.7'
         validate-wrappers: false
 
-    - name: 5. Locate Project Root and Build Debug APK
+    - name: 5. Enable AndroidX and Build Debug APK
       run: |
         SETTINGS_FILE=$(find . -name "settings.gradle.kts" | head -n 1)
 
         if [ -z "$SETTINGS_FILE" ]; then
-          echo "##[error]CRITICAL: settings.gradle.kts is missing! Make sure settings.gradle.kts, build.gradle.kts, and the app/ folder are uploaded to GitHub."
+          echo "##[error]CRITICAL: settings.gradle.kts is missing!"
           exit 1
         fi
 
         PROJECT_DIR=$(dirname "$SETTINGS_FILE")
-        echo "Building Android project in directory: $PROJECT_DIR"
         cd "$PROJECT_DIR"
+
+        # Automatically create gradle.properties with AndroidX enabled
+        cat <<EOF > gradle.properties
+        org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+        android.useAndroidX=true
+        android.enableJetifier=true
+        kotlin.code.style=official
+        android.nonTransitiveRClass=true
+        EOF
 
         gradle assembleDebug --stacktrace
 
