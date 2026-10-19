@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0f2419"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#dfd3a9"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvLcdTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="IND v PAK (2007 T20 Final)"
+            android:textColor="#1e2414"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvLcdScore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="PAK: 104/7 (16.1 Ov)"
+            android:textColor="#384225"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvLcdTicker"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="6dp"
+            android:background="#181e0f"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="Tap START RADIO to begin..."
+            android:textColor="#f4e8b8"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnMaleVoice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="👨 Male" />
+
+        <Button
+            android:id="@+id/btnFemaleVoice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="👩 Female" />
+
+        <Button
+            android:id="@+id/btnDuoVoice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="👥 Duo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnPlayPause"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="2"
+            android:backgroundTint="#f3e2b3"
+            android:text="START RADIO"
+            android:textColor="#1b1205"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnNextBall"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#2b4738"
+            android:text="NEXT BALL"
+            android:textColor="#f3e2b3" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#10261a"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AKASHVANI PITCH"
+        android:textColor="#f3e2b3"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Pocket Cricket Transistor • Live &amp; Classics"
+        android:textColor="#c7d9ce"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btnPowerOn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="36dp"
+        android:backgroundTint="#d8b36a"
+        android:text="POWER ON TRANSISTOR"
+        android:textColor="#161209"
+        android:textStyle="bold" />
+</LinearLayout>
