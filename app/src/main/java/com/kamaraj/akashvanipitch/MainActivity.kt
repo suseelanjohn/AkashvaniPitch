@@ -1,7 +1,5 @@
 package com.kamaraj.akashvanipitch
 
-import android.media.AudioAttributes
-import android.media.SoundPool
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,8 +16,7 @@ data class Delivery(
     val event: String,
     val statusSpeech: String,
     val actionSpeech: String,
-    val pitchInsight: String,
-    val playerInsight: String
+    val pitchInsight: String
 )
 
 data class MatchStation(
@@ -32,9 +29,6 @@ data class MatchStation(
 class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
-    private lateinit var soundPool: SoundPool
-    private var batKnockSoundId: Int = 0
-
     private var selectedVoiceGender = "MALE"
     private var maleVoice: Voice? = null
     private var femaleVoice: Voice? = null
@@ -54,15 +48,26 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     "16.1", "PAK: 104/7", "Need 54 from 24 balls", "DOT",
                     "Current Match Status: Pakistan are 104 for 7 at the start of the seventeenth over. They need 54 runs from 24 balls.",
                     "Irfan Pathan steams in to Misbah-ul-Haq, crisp length on off stump, Misbah defends it solidly back down the pitch. No run.",
-                    "Looking at this Wanderers pitch in Johannesburg, the afternoon sun has baked the surface hard, offering extra bounce for seamers.",
-                    "Misbah-ul-Haq has been Pakistan's calmest finisher all tournament, refusing to panic under scoreboard pressure."
+                    "Looking at this Wanderers pitch in Johannesburg, the afternoon sun has baked the surface hard, offering extra bounce for seamers."
                 ),
                 Delivery(
                     "19.3", "PAK: 152/10", "INDIA WIN BY 5 RUNS!", "WICKET",
                     "Ball 19.3 Status: Pakistan are 152 for 9, needing 6 runs from 4 balls. Misbah-ul-Haq on strike to Joginder Sharma.",
                     "Misbah walks across his stumps and scoops it high in the air over short fine leg! Sreesanth settles under it... and takes the catch! India win the inaugural T20 World Cup!",
-                    "Joginder rolled his fingers over the seam to take pace off, forcing Misbah to generate all the elevation himself.",
-                    "Young captain MS Dhoni lifts history in Johannesburg! Every player in this young squad writes their name into folklore!"
+                    "Joginder rolled his fingers over the seam to take pace off, forcing Misbah to generate all the elevation himself."
+                )
+            )
+        ),
+        MatchStation(
+            title = "LIVE: IND v AUS (5th Test)",
+            category = "LIVE TEST MATCH",
+            mode = "LIVE",
+            deliveries = listOf(
+                Delivery(
+                    "78.1", "IND: 284/5", "Need 38 runs in 11.5 overs", "FOUR",
+                    "Live Score Status from Sydney: India are 284 for 5 in 78.1 overs, chasing 322 on Day 5. Rishabh Pant is batting on 64.",
+                    "Pat Cummins bowls short of a length, and Rishabh Pant cracks a fierce cut shot past point for four runs! The Sydney crowd erupts!",
+                    "This Day 5 Sydney Cricket Ground pitch has rough footmarks outside the left-hander's off stump, but the center strip remains firm."
                 )
             )
         )
@@ -73,12 +78,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         setContentView(R.layout.activity_main)
 
         tts = TextToSpeech(this, this)
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_MEDIA)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build()
-
-        soundPool = SoundPool.Builder().setMaxStreams(3).setAudioAttributes(audioAttributes).build()
         setupUIControls()
     }
 
@@ -99,6 +98,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val btnMale = findViewById<Button>(R.id.btnMaleVoice)
         val btnFemale = findViewById<Button>(R.id.btnFemaleVoice)
         val btnDuo = findViewById<Button>(R.id.btnDuoVoice)
+        val btnRotateDial = findViewById<Button>(R.id.btnRotateDial)
 
         btnPlay.setOnClickListener {
             isPlaying = !isPlaying
@@ -118,9 +118,28 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             else updateLCD()
         }
 
-        btnMale.setOnClickListener { selectedVoiceGender = "MALE"; Toast.makeText(this, "Booth: Male Lead", Toast.LENGTH_SHORT).show() }
-        btnFemale.setOnClickListener { selectedVoiceGender = "FEMALE"; Toast.makeText(this, "Booth: Female Lead", Toast.LENGTH_SHORT).show() }
-        btnDuo.setOnClickListener { selectedVoiceGender = "DUO"; Toast.makeText(this, "Booth: Co-Host Duo", Toast.LENGTH_SHORT).show() }
+        btnRotateDial.setOnClickListener {
+            currentStationIdx = (currentStationIdx + 1) % stations.size
+            currentBallIdx = 0
+            updateLCD()
+            if (isPlaying) playCurrentDeliverySequence()
+        }
+
+        btnMale.setOnClickListener {
+            selectedVoiceGender = "MALE"
+            findViewById<TextView>(R.id.tvVoiceStatus).text = "🎙️ MALE"
+            Toast.makeText(this, "Booth: Male Lead", Toast.LENGTH_SHORT).show()
+        }
+        btnFemale.setOnClickListener {
+            selectedVoiceGender = "FEMALE"
+            findViewById<TextView>(R.id.tvVoiceStatus).text = "🎙️ FEMALE"
+            Toast.makeText(this, "Booth: Female Lead", Toast.LENGTH_SHORT).show()
+        }
+        btnDuo.setOnClickListener {
+            selectedVoiceGender = "DUO"
+            findViewById<TextView>(R.id.tvVoiceStatus).text = "🎙️ DUO"
+            Toast.makeText(this, "Booth: Co-Host Duo", Toast.LENGTH_SHORT).show()
+        }
 
         updateLCD()
     }
@@ -131,7 +150,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         updateLCD()
 
         val leadGender = if (selectedVoiceGender == "FEMALE") "FEMALE" else "MALE"
-        val analystGender = if (selectedVoiceGender == "DUO") "FEMALE" else leadGender
 
         applyVoiceProfile(leadGender, 0.95f, 0.98f)
         tts.speak(delivery.statusSpeech, TextToSpeech.QUEUE_FLUSH, null, "STATUS_ID")
@@ -143,7 +161,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
             handler.postDelayed({
                 if (!isPlaying) return@postDelayed
-                applyVoiceProfile(analystGender, 0.94f, 0.96f)
+                applyVoiceProfile(leadGender, 0.94f, 0.96f)
                 tts.speak("Pitch Report: ${delivery.pitchInsight}", TextToSpeech.QUEUE_ADD, null, "LORE_ID")
 
                 handler.postDelayed({
@@ -169,6 +187,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun updateLCD() {
         val station = stations[currentStationIdx]
         val delivery = station.deliveries[currentBallIdx]
+        findViewById<TextView>(R.id.tvLcdCategory).text = station.category
         findViewById<TextView>(R.id.tvLcdTitle).text = station.title
         findViewById<TextView>(R.id.tvLcdScore).text = "${delivery.score} (${delivery.over} Ov)"
         findViewById<TextView>(R.id.tvLcdTicker).text = delivery.statusSpeech
@@ -177,7 +196,6 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onDestroy() {
         tts.stop()
         tts.shutdown()
-        soundPool.release()
         super.onDestroy()
     }
 }
